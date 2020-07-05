@@ -184,4 +184,30 @@ coreClock: 1.56GHz coreCount: 16 deviceMemorySize: 4.00GiB deviceMemoryBandwidth
 
 ```
 
+Lets see how much memory is allocated to our GPU:
+
+```bash
+>>> from tensorflow.python.client import device_lib
+>>> print (device_lib.list_local_devices())
+[name: "/device:CPU:0"
+device_type: "CPU"
+memory_limit: 268435456
+locality {
+}
+incarnation: 16190646232416109032
+, name: "/device:GPU:0"
+device_type: "GPU"
+memory_limit: 3059115622
+locality {
+  bus_id: 1
+  links {
+  }
+}
+incarnation: 2772747070698555022
+physical_device_desc: "device: 0, name: GeForce GTX 1650, pci bus id: 0000:01:00.0, compute capability: 7.5"
+]
+```
+
+The memory limit is 3GB
+
 Great! Now we have GPU enabled in tensorflow and everything should work fine!
