@@ -82,3 +82,29 @@ From z→x is G
 - This can happen if G simply remembers the training data, but this is prevented by a few things. Note that G generates continuous data, and as we can see from the dots of the black curve, the real data is a bunch of discrete data pts. So there will be gaps as represented by the circle above.
     - Maybe since the G generates continuous data, we can obtain smooth transitions bw fake images as in applications of GANs
 - Also G never really sees the training data directly. So it does not remember it exactly
+
+### GAN Algorithm
+
+![https://i.imgur.com/XZROMBT.png](https://i.imgur.com/XZROMBT.png)
+
+So now image D and G are two NNs
+
+We sample a bunch of noise samples and give it to G, it gives an op. We feed this op to D and get D(G(z))
+
+Also we feed a bunch of real data  samples to D and obtain D(x)
+
+We calculate the loss as shown and find gradient wrt theta_d where probably theta_d means the wts of D
+
+We ascend the gradient i.e try to maximize the objective in this case
+
+Thus in this way we update (train) the discriminator
+
+After this is done, we sample a bunch of noise samples and pass it through G. Now we have to minimize the objective function wrt the weights in G, so the term of LHS equals 0 as there is no G there. So we are only left with the term:
+
+![https://i.imgur.com/xzxddVC.png](https://i.imgur.com/xzxddVC.png)
+
+We have to minimize this so we descend the gradient. Thus now G will be trained to create samples that D will fail to understand
+
+Also in the G network they input the noise only at the lowest layer. So if we imagine G to be a DNN which ops an image. We just put it in the first layer, but we could have put it at any/all layer(s). but here we input noise at the very beginning as a vector and let the NN produce the image from that
+
+Also there is a bunch of theoretical analysis in the paper which basically concludes that there exists a global optimum point which occurs when the generator captures the data distribution perfectly. This can and will be achieved if we can optimize the prob distributions with reasonable degree of freedom and NNs do give us good hope that they will be achieved in practical scenarios
