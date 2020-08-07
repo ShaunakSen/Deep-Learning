@@ -39,6 +39,7 @@ There is a lot to this equation. Lets understand this slowly at a high level
 - log(D(x)) is the log probability of data
 - log(D(G(z)) is the log probability of the generated samples, where z is the input to the G network, which has a prior probability distribution.  z is the noise distribution, so p(z) is prior on the noise distribution and we sample a data from that noise distribution (NOTE: we are not sampling from the original data)
 - So basically the network G takes an ip: z and turns it into something that resembles the original data to a certain extent. Then D takes that output and finally we compute D(G(z))).
+- For example, if G is a DNN, z can be noise given as ip to any layer of a DNN. The op of G(z) is the op of the DNN which we want to be realistic
 - Now note that G(z) is a fake data pt. So ideally we want D(G(z)) to be low (from the perspective of D). So from the perspective of D we want to minimize D(G(z)) → min (log(D(G(z)) → max  negative (log(D(G(z)).
     - log(1-D(G(z)) → log(1) - log(D(G(z)) → -log(D(G(z))
 - Ok so for the 2nd part of the eqn, from the point of view of D, it is trying to maximize it. Now similarly G tries to fool D. So it wants D to believe that D(G(z))  is high. So it will try to minimize the 2nd part of the equation
@@ -55,9 +56,9 @@ We have the z-space which is sampled uniformly
 
 From z→x is G
 
-- The blue curve is the fake data distribution
+- The green curve is the fake data distribution
 - The black curve is the real data distribution
-- D is supposed to tell us where there is real data and where there is fake data
+- D (blue) is supposed to tell us where there is real data and where there is fake data
 - Not initially D is half-trained so it is not very good (step a)
 
      
@@ -80,7 +81,7 @@ From z→x is G
     ![https://i.imgur.com/dCwit35.png](https://i.imgur.com/dCwit35.png)
 
 - This can happen if G simply remembers the training data, but this is prevented by a few things. Note that G generates continuous data, and as we can see from the dots of the black curve, the real data is a bunch of discrete data pts. So there will be gaps as represented by the circle above.
-    - Maybe since the G generates continuous data, we can obtain smooth transitions bw fake images as in applications of GANs
+    - Maybe since the G generates continuous data, we can obtain smooth transitions bw fake images as in applications of GANs (we will see this later)
 - Also G never really sees the training data directly. So it does not remember it exactly
 
 ### GAN Algorithm
@@ -123,9 +124,13 @@ Here we see some of the results, not that the ones on the right outlined in yell
 
 Figures a → c use fully connected networks but d which has been trained on CIFAR-10 used a convolutional discriminator for D (CNN to tell real vs fake) and a deconvolutional generator (G) to create new images
 
+![https://i.imgur.com/lWlLxMb.png](https://i.imgur.com/lWlLxMb.png)
+
+We saw earlier that the distribution produced by G (the green curve) was continuous and this means that we can linearly interpolate bw generated samples as we see in the figure above
+
 ---
 
-### Subpart: What is deconvolutional neural network
+### Quick aside: What is deconvolutional neural network
 
 Notes based on this article by Mark Farragher: https://medium.com/machinelearningadvantage/here-are-the-mind-blowing-things-a-deconvolutional-neural-network-can-do-2fc99e008fe4
 
