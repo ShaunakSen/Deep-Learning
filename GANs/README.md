@@ -1,5 +1,9 @@
 # GAN - Understanding the Basics
 
+# Original Paper Explanation
+
+---
+
 Based on the classic paper tutorial by **Yannic Kilcher**: https://www.youtube.com/watch?v=eyxmSmjmNS0
 Original paper link: https://arxiv.org/abs/1406.2661
 
@@ -196,3 +200,71 @@ Do you realize what this means? It means that…
 - Machine learning can take an image of a person, and change their facial expression, their clothes, and even their body pose.
 
 ---
+
+# A Friendly Introduction to Generative Adversarial Networks (GANs)
+
+Notes on the video by Luis Searrano: https://www.youtube.com/watch?v=8L11aMN5KY8
+
+## General idea
+
+As we have seen already there are 2 NNs - D and G
+
+G generates data points trying to fool D. D is trained to tell real data from fake data
+
+As G generates samples and D rejects them, G grows better slowly until D can no longer tell if the data produced by G is real or fake.
+
+## A very simple GAN
+
+Imagine we live in a slanted land where everyone is slightly elongated and at a 45 degree angle. Our input data can only be 2x2 and NNs can only be 1 layer deep
+
+So the faces and noises in 2x2 pixels will look something like this:
+
+![https://i.imgur.com/Yxb0WH3.png](https://i.imgur.com/Yxb0WH3.png)
+
+Faces in 2x2 pixels
+
+### Building the Discriminator
+
+![https://i.imgur.com/5D0YeuJ.png](https://i.imgur.com/5D0YeuJ.png)
+
+![https://i.imgur.com/6TDLm4L.png](https://i.imgur.com/6TDLm4L.png)
+
+We just add the numbers at top left and bottom right and subtract it from the others. If the result is > 1 it is real else it is fake
+
+**NN architecture for the Discriminator:**
+
+![https://i.imgur.com/d1pKR2Q.png](https://i.imgur.com/d1pKR2Q.png)
+
+Imagine this is a trained nw and the wts and biases have been learned
+
+The op of the nw for this image is +1 and when it goes through the sigmoid it becomes 0.73 > 0.5 so we can say its real
+
+![https://i.imgur.com/rt1C0PO.png](https://i.imgur.com/rt1C0PO.png)
+
+### Building the Generator
+
+We pick a number z (a random value between 0 and 1); say 0.7. In general the ip will be a vector which comes from a fixed distribution
+
+Ideally what we want is an image that can fool D
+
+So large values in top left and bottom right and low values elsewhere
+
+Here large values indicate high wts (thick lines)
+
+![https://i.imgur.com/sGQ8bRM.png](https://i.imgur.com/sGQ8bRM.png)
+
+So basically we need to connect high wts to the places where we want op to be large and vice-versa
+
+![https://i.imgur.com/mfhbIMR.png](https://i.imgur.com/mfhbIMR.png)
+
+Similarly we fill the rest of the wts and add sigmoid as the activation. the result:
+
+![https://i.imgur.com/92bujJ4.png](https://i.imgur.com/92bujJ4.png)
+
+The ops go into the image as pixel values
+
+The image does look like a valid image
+
+The way we structured the wts will always guarantee that the values for top left and bottom right will be high and others will be low, no matter what value of z we have. If z = 0.1 we get the values 1.1 and sigmoid(1.1) is 0.75
+
+Similarly if z = 0 we get 1 and sigmoid(1)=0.73
