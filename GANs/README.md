@@ -265,6 +265,54 @@ The ops go into the image as pixel values
 
 The image does look like a valid image
 
-The way we structured the wts will always guarantee that the values for top left and bottom right will be high and others will be low, no matter what value of z we have. If z = 0.1 we get the values 1.1 and sigmoid(1.1) is 0.75
+The way we structured the wts will always guarantee that the values for top left and bottom right will be high and others will be low, no matter what value of z we have. If z = 0.1 we get the values 1.1 for the +ve wts and sigmoid(1.1) is 0.75. We get -1*0.1 + 1*-1 = -1.1. Note that the bias of +1 is connected by a -ve wt. Sigmoid(-1.1) = 0.25
 
-Similarly if z = 0 we get 1 and sigmoid(1)=0.73
+Similarly if z = 0 we get 1 for the positive wts and sigmoid(1)=0.73. For the -ve wts we get 0*-1 + 1*-1 = -1 and sigmoid(-1) = 0.27
+
+So no matter what z is we get an accurate representation of the data
+
+## GAN Training Process
+
+### Error function
+
+![https://i.imgur.com/pdrJgcn.png](https://i.imgur.com/pdrJgcn.png)
+
+So when the label is 1, -ln(prediction) is a good loss function
+
+![https://i.imgur.com/I2Wqv1M.png](https://i.imgur.com/I2Wqv1M.png)
+
+So when the label is 0, -ln(1-prediction) is a good loss function
+
+### Overall process
+
+1. Initially we start off with random wts in G
+2. We do a forward pass and obtain an image; since wts are random, this is probably not a good result
+
+    ![https://i.imgur.com/sCMRlrz.png](https://i.imgur.com/sCMRlrz.png)
+
+3. This is our generated image
+4. We pass this through D which is supposed to tell us if the image is real or fake
+5. Lets say prob output of D = 0.68
+
+    ![https://i.imgur.com/6B2YJW2.png](https://i.imgur.com/6B2YJW2.png)
+
+6. Now since the image is fake the ideal op of a fully trained generator should have been 0
+7. The error function for this case was -ln(1-prediction). **This is the error function for D. his error function will help us train the wts of D**
+8. From the perspective of G, it wants to generate an image which D classifies as real
+9. G wants this whole NN (G+D) to op a 1 
+10. The error function for this case was -ln(prediction). **This is the error function for G. This error function will help us train the wts of G**
+11. In other words, if G(z) is the op of G and D(G(z)) is op of D, then error function for G is -ln(D(G(z))) and error function for D is -ln(1-D(G(z)))
+
+    ![https://i.imgur.com/Xqth2tW.png](https://i.imgur.com/Xqth2tW.png)
+
+12. Notice that these 2 error functions fight against each other, if one is high other is low but that is Ok as the red error function only changes the wts of G and the blue one only changes the wts of D so they do not collide. They simply improve both NNs as one to produce better ops
+13. We repeat this process many times until we obtain trained wts:
+
+    ![https://i.imgur.com/kJ1cwwR.png](https://i.imgur.com/kJ1cwwR.png)
+
+14. As we can see that the generated image looks very close to the real images
+15. Also here we can see that the G error plot dec and stabilizes but that of D dec and then keeps on increasing as G ends up fooling D
+
+    ![https://i.imgur.com/b6Y3mIP.png](https://i.imgur.com/b6Y3mIP.png)
+
+---
