@@ -53,3 +53,42 @@ Lets look at the previous diagram. For one convolution operation shown (0.0 + 1.
 So number of multiplications required: D_G^2 x D_K^2 x M (for 1 filter/kernel)
 
 For N filters: N x D_G^2 x D_K^2 x M (this is the cost for the traditional convolution operation)
+
+---
+
+In depth wise convolution there are 2 steps:
+
+1. Depth-wise convolution : Filtering stage
+2. Point-wise convolution : Combining stage
+
+### Depth-wise convolution: Filtering stage
+
+In the standard convolution, we studied, the convolution was applied to add channels and we took the sum as output
+
+Let us imagine an image with dimensions: D_F x D_F x M
+
+In depth-wise convolution we have filters which have only one channel (we have M such filters). Assume each filter is of shape: D_K x D_K x 1
+
+The filters have one channels as each of the filters are only applied to a single channel of the input
+
+![https://i.imgur.com/pz2DloA.png](https://i.imgur.com/pz2DloA.png)
+
+ 
+
+For each of these filters we apply convolution and get M channel outputs (remember number of op channels == no of filters) of shape D_G x D_G x 1
+
+Stacking these M channels together, we obtain an op volume of D_G x D_G x M
+
+![https://i.imgur.com/DLu2fzL.png](https://i.imgur.com/DLu2fzL.png)
+
+### Point-wise convolutions: Filtering stage
+
+Here the input is the output of the previous step, i.e the volume of shape D_G x D_G x M
+
+Here the filter shape used is 1x1xM and we have N such filters
+
+So this filter is applied in the same manner as the traditional filters and each filter yields an op of shape D_G x D_G x 1
+
+As we use N filters, final shape: D_G x D_G x N
+
+![https://i.imgur.com/bQGexsP.png](https://i.imgur.com/bQGexsP.png)
