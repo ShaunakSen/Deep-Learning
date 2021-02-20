@@ -303,3 +303,73 @@ NOTE: here the context is labeled C, but it is different for each RNN block
 Lets consider alpha_3,t i.e when we are trying to generate the 3rd word, the attention we are placing on t_th word will depend on the activation of the bidirectional RNN at time t and also on the state from the prev step (S_2)
 
 In this way the RNN marches forward generating one word at a time until it generates <EOS> and at every step there is an attention wt (alpha_i,j) that tells it that when u are trying to generate the ith eng word how much attention should u pay to jth french word
+
+## Mechanics of Attention model
+
+Video by AndrewNG: https://www.youtube.com/watch?v=quoGRI-1l0A
+
+In a bi-directional RNN, at every time step we have features computed from forward recurrence and backward recurrence, we will denote both as $<a^{\acute{t}}>$. So $<a^{\acute{t}}>$ will be the feature vector for time step t
+
+![https://i.imgur.com/KQyx4KA.png](https://i.imgur.com/KQyx4KA.png)
+
+Also, the next layer has:
+
+![https://i.imgur.com/bLBGfDQ.png](https://i.imgur.com/bLBGfDQ.png)
+
+The alpha_1,1 → alpha_1,N are basically the attention wts to compute the first op word
+
+One requirement is that all these wts sum up to 1 (they should be normalized for varying input sentence length)
+
+![https://i.imgur.com/w7sEiWJ.png](https://i.imgur.com/w7sEiWJ.png)
+
+Just to simplify this, the equations imply:
+
+1. For each op we have a set of N attention wts where N is the length of input sentence
+2. These wts should sum upto 1
+3. The context for each time step is the weighted sum of the activations of the previous layer where the weights are the sum of the attention wts for that op
+    1. For the first op word C_1 = alpha_1,1 x a_1 + alpha_1,2 x a_2 + .. alpha_1,N x a_N
+4. The network on the 2nd layer now takes in each such context and op of previous step and produces the ops one by one
+
+    ![https://i.imgur.com/aGKtoS3.png](https://i.imgur.com/aGKtoS3.png)
+
+### How to compute the attention weights
+
+To recap:
+
+![https://i.imgur.com/LhWkuEL.png](https://i.imgur.com/LhWkuEL.png)
+
+The amount of attention paid of the ${t}'$ th word while generating the t_th op
+
+Also remember that for each op we sum across all ${t}'$, so the sum should be 1
+
+![https://i.imgur.com/seQuIcG.png](https://i.imgur.com/seQuIcG.png)
+
+This is nothing but softmax of the e vectors to make sure that they all sum up to 1
+
+What are these e vectors?
+
+Lets go back to the network we had:
+
+![https://i.imgur.com/LcoKz2u.png](https://i.imgur.com/LcoKz2u.png)
+
+s<t-1> was the hidden state from prev time step
+
+a <t'> was the features we received from time step t'
+
+Intuition: How much attention to pay to the activation at t' kind of depends on what is the own hidden state activation from prev time step. Also for each of the words we look at their features     (a <t'>) for t' = 1... N
+
+We use a small NN for this:
+
+![https://i.imgur.com/LVjX6FF.png](https://i.imgur.com/LVjX6FF.png)
+
+NOTE : here probably all the activations for t' = 1... N are fed into the NN for it to pick out a value of e that essentially serves as the correct attention value to pay for that t'
+
+It turns out that for practical purposes this works really well and the NN pays attention to the correct words of the input sentence
+
+Complexity: If we have T_x words in input and T_y words in op then for each word T_y we have to compute attention for each of T_x words , so we will need to compute T_x x T_y attention parameters (quadratic costs). For machine translation, where the ip and op sentences are fairly short, this is acceptable
+
+Here we have mainly discussed a machine translation prob where the ip were word and op are also words. This has been applied to Image captioning tasks as well, we use a very similar architecture and ips are the pictures (pixels) and pay attention to only parts of picture at a time to generate the captions
+
+![https://i.imgur.com/GSGl0jA.png](https://i.imgur.com/GSGl0jA.png)
+
+This is an example machine translation tasks, and attention wts are computed bw each pair of words in ip and op sentence (white ones represent higher attention values)
