@@ -12,6 +12,8 @@ Transformer: yannik + jay alamar
 
 [https://www.youtube.com/watch?v=6l1fv0dSIg4](https://www.youtube.com/watch?v=6l1fv0dSIg4)
 
+[https://www.youtube.com/watch?v=ah7_mfl7LD0](https://www.youtube.com/watch?v=ah7_mfl7LD0)
+
 ---
 
 Paper link: https://arxiv.org/pdf/1706.03762.pdf
@@ -373,3 +375,56 @@ Here we have mainly discussed a machine translation prob where the ip were word 
 ![https://i.imgur.com/GSGl0jA.png](https://i.imgur.com/GSGl0jA.png)
 
 This is an example machine translation tasks, and attention wts are computed bw each pair of words in ip and op sentence (white ones represent higher attention values)
+
+## Transformers: Deep Learning @ VU
+
+Notes on the Deep Learning at VU University Amsterdam course: https://dlvu.github.io/
+
+## Part 1 : Self Attention
+
+We have already seen a seq2seq layer in which the ips are a seq of tensors (usually vectors) and produce a seq of vectors as an op
+
+![https://i.imgur.com/dSDwzsp.png](https://i.imgur.com/dSDwzsp.png)
+
+The defining property of these layers is how it can handle different lengths of inputs with the same parameters
+
+RNNs can in theory look indefinitely far back into the seq, but the drawback is that it requires sequential processing, so we can compute a time step op before we have computed for the prev time step
+
+*The self attention model will allow us to have parallel computation and the ability to look at any point in the seq before or after the current op*
+
+### The basics of self attention
+
+![https://i.imgur.com/KZ7A99w.png](https://i.imgur.com/KZ7A99w.png)
+
+Here we have a seq of ip vectors and a seq of op vectors and the basic operation to produce a given op vector is a weighted sum over the ip vectors
+
+So for every op we have 6 wts here, we compute the weighted sum and this gives us op
+
+The trick is that these weights (w_i,j) is NOT a model parameter but a derived value that we compute (learn) from the ip data
+
+Lets understand the basics of self-attention graphically first
+
+1. We have a seq of 6 ips and 6 corresponding ops. For now we will look at the computation of y3
+
+    ![https://i.imgur.com/3FKdrJB.png](https://i.imgur.com/3FKdrJB.png)
+
+2. We take the corr ip x3 and for every vector in the ip seq we compute a weight by taking the dot product of x3 with that vector
+
+    ![https://i.imgur.com/aIowfSS.png](https://i.imgur.com/aIowfSS.png)
+
+3. Now we have 6 (wts w31 ... w36) w_i,j : how much attention should the output at i pay to ip at position j
+4. We take softmax of all the wts so that they sum upto 1
+
+    ![https://i.imgur.com/5JUAeyi.png](https://i.imgur.com/5JUAeyi.png)
+
+5. We multiply each ip vector by the weight computed and we sum them all up adn this gives us the vector y3
+
+    ![https://i.imgur.com/xz9aTWO.png](https://i.imgur.com/xz9aTWO.png)
+
+4. The entire process can be described in these equations:
+
+![https://i.imgur.com/SBaDJwz.png](https://i.imgur.com/SBaDJwz.png)
+
+This process can be easily vectorized as shown below:
+
+![https://i.imgur.com/R4E3lIf.png](https://i.imgur.com/R4E3lIf.png)
