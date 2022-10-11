@@ -210,4 +210,4 @@ physical_device_desc: "device: 0, name: GeForce GTX 1650, pci bus id: 0000:01:00
 
 The memory limit is 3GB
 
-Great! Now we have GPU enabled in tensorflow and everything should work fine!
+Great! Now we have GPU enabled in tensorflow and everything should work fine! :)
