@@ -2,7 +2,7 @@
 
 Based on this amazing guide by Prof Jeff Heaton: https://www.youtube.com/watch?v=qrkEYf-YDyI
 
-## Step 1: Find which GPU do I have ?
+## Step 1: Find which GPU do I have?
 
 First we will need to detect the GPU we have present on our system
 
